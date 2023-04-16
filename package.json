@@ -1,51 +1,58 @@
 {
-  "name": "n8n-nodes-directus",
-  "version": "1.0.0",
-  "description": "Node to interact with a Directus instance",
-  "keywords": [
-    "n8n-community-node-package"
-  ],
-  "license": "MIT",
-  "homepage": "",
-  "author": {
-    "name": "",
-    "email": ""
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/arladmin/n8n-nodes-directus.git"
-  },
-  "main": "index.js",
-  "scripts": {
-    "build": "tsc && gulp build:icons",
-    "dev": "tsc --watch",
-    "format": "prettier nodes credentials --write",
-    "lint": "tslint -p tsconfig.json -c tslint.json && eslint nodes credentials package.json",
-    "lintfix": "tslint --fix -p tsconfig.json -c tslint.json && eslint nodes credentials package.json --fix",
-    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "n8n": {
-    "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/DirectusApi.credentials"
-    ],
-    "nodes": [
-      "dist/nodes/Directus/Directus.node.js"
-    ]
-  },
-  "devDependencies": {
-    "@types/express": "^4.17.6",
-    "@types/request-promise-native": "~1.0.15",
-    "@typescript-eslint/parser": "^5.29.0",
-    "eslint-plugin-n8n-nodes-base": "^1.5.4",
-    "gulp": "^4.0.2",
-    "n8n-core": "^0.125.0",
-    "n8n-workflow": "^0.107.0",
-    "prettier": "^2.7.1",
-    "tslint": "^6.1.2",
-    "typescript": "~4.6.0"
-  }
+	"name": "n8n-nodes-directus",
+	"version": "1.0.0",
+	"description": "Node to interact with a Directus instance",
+	"keywords": [
+		"n8n-community-node-package"
+	],
+	"license": "MIT",
+	"homepage": "",
+	"author": {
+		"name": "",
+		"email": ""
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/arladmin/n8n-nodes-directus.git"
+	},
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc && gulp build:icons",
+		"dev": "tsc --watch",
+		"format": "prettier nodes credentials --write",
+		"lint": "eslint nodes credentials package.json",
+		"tslint": "tslint -p tsconfig.json -c tslint.json &&",
+		"lintfix": "eslint nodes credentials package.json --fix",
+		"tslintfix": "tslint --fix -p tsconfig.json -c tslint.json",
+		"prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"credentials": [
+			"dist/credentials/DirectusApi.credentials"
+		],
+		"nodes": [
+			"dist/nodes/Directus/Directus.node.js"
+		]
+	},
+	"devDependencies": {
+		"@types/express": "^4.17.6",
+		"@types/form-data": "^2.5.0",
+		"@types/luxon": "^3.3.0",
+		"@types/node": "^18.14.0",
+		"@types/request": "^2.48.8",
+		"@types/request-promise-native": "~1.0.15",
+		"form-data": "^4.0.0",
+		"n8n-core": "*",
+		"n8n-workflow": "*",
+		"tslint": "^6.1.3",
+		"@typescript-eslint/parser": "~5.45",
+		"eslint-plugin-n8n-nodes-base": "^1.11.0",
+		"gulp": "^4.0.2",
+		"prettier": "^2.7.1",
+		"typescript": "~4.8.4"
+	}
 }

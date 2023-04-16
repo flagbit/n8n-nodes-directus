@@ -15,7 +15,5 @@
 			}
 		]
 	},
-	"alias": [
-		"Directus"
-	]
+	"alias": ["Directus"]
 }

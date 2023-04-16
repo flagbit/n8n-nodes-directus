@@ -1,4 +1,4 @@
-import { BINARY_ENCODING, IExecuteFunctions } from "n8n-core";
+import { IExecuteFunctions } from 'n8n-core';
 
 import {
 	IBinaryData,
@@ -10,206 +10,158 @@ import {
 	INodePropertyOptions,
 	INodeType,
 	INodeTypeDescription,
-	//	NodeApiError,
-	//	NodeOperationError,
-	LoggerProxy as Logger,
-} from "n8n-workflow";
-
-import FormData from 'form-data';
+} from 'n8n-workflow';
 
 import {
 	directusApiAssetRequest,
 	directusApiFileRequest,
 	directusApiRequest,
-	validateJSON,
-} from "./GenericFunctions";
+} from './GenericFunctions';
 
-import { OptionsWithUri } from "request";
+import { activityFields, activityOperations } from './Descriptions/ActivityDescription';
 
-import {
-	activityFields,
-	activityOperations,
-} from "./Descriptions/ActivityDescription";
+import { assetsFields, assetsOperations } from './Descriptions/AssetsDescription';
 
-import {
-	assetsFields,
-	assetsOperations,
-} from "./Descriptions/AssetsDescription";
+import { authFields, authOperations } from './Descriptions/AuthDescription';
 
-import { authFields, authOperations } from "./Descriptions/AuthDescription";
+import { collectionsFields, collectionsOperations } from './Descriptions/CollectionsDescription';
 
-import {
-	collectionsFields,
-	collectionsOperations,
-} from "./Descriptions/CollectionsDescription";
+import { extensionsFields, extensionsOperations } from './Descriptions/ExtensionsDescription';
 
-import {
-	extensionsFields,
-	extensionsOperations,
-} from "./Descriptions/ExtensionsDescription";
+import { fieldsFields, fieldsOperations } from './Descriptions/FieldsDescription';
 
-import {
-	fieldsFields,
-	fieldsOperations,
-} from "./Descriptions/FieldsDescription";
+import { filesFields, filesOperations } from './Descriptions/FilesDescription';
 
-import { filesFields, filesOperations } from "./Descriptions/FilesDescription";
+import { foldersFields, foldersOperations } from './Descriptions/FoldersDescription';
 
-import {
-	foldersFields,
-	foldersOperations,
-} from "./Descriptions/FoldersDescription";
+import { itemsFields, itemsOperations } from './Descriptions/ItemsDescription';
 
-import { itemsFields, itemsOperations } from "./Descriptions/ItemsDescription";
+import { permissionsFields, permissionsOperations } from './Descriptions/PermissionsDescription';
 
-import {
-	permissionsFields,
-	permissionsOperations,
-} from "./Descriptions/PermissionsDescription";
+import { presetsFields, presetsOperations } from './Descriptions/PresetsDescription';
 
-import {
-	presetsFields,
-	presetsOperations,
-} from "./Descriptions/PresetsDescription";
+import { relationsFields, relationsOperations } from './Descriptions/RelationsDescription';
 
-import {
-	relationsFields,
-	relationsOperations,
-} from "./Descriptions/RelationsDescription";
+import { revisionsFields, revisionsOperations } from './Descriptions/RevisionsDescription';
 
-import {
-	revisionsFields,
-	revisionsOperations,
-} from "./Descriptions/RevisionsDescription";
+import { rolesFields, rolesOperations } from './Descriptions/RolesDescription';
 
-import { rolesFields, rolesOperations } from "./Descriptions/RolesDescription";
+import { serverFields, serverOperations } from './Descriptions/ServerDescription';
 
-import {
-	serverFields,
-	serverOperations,
-} from "./Descriptions/ServerDescription";
+import { settingsFields, settingsOperations } from './Descriptions/SettingsDescription';
 
-import {
-	settingsFields,
-	settingsOperations,
-} from "./Descriptions/SettingsDescription";
+import { usersFields, usersOperations } from './Descriptions/UsersDescription';
 
-import { usersFields, usersOperations } from "./Descriptions/UsersDescription";
+import { utilsFields, utilsOperations } from './Descriptions/UtilsDescription';
 
-import { utilsFields, utilsOperations } from "./Descriptions/UtilsDescription";
-
-import {
-	webhooksFields,
-	webhooksOperations,
-} from "./Descriptions/WebhooksDescription";
+import { webhooksFields, webhooksOperations } from './Descriptions/WebhooksDescription';
 
 export class Directus implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: "Directus",
-		name: "directus",
-		icon: "file:directus.svg",
-		group: ["transform"],
+		displayName: 'Directus',
+		name: 'directus',
+		icon: 'file:directus.svg',
+		group: ['transform'],
 		version: 1,
-		description: "Consume Directus API",
+		description: 'Consume Directus API',
 		subtitle: '={{$parameter["operation"] + " : " + $parameter["resource"]}}',
 		defaults: {
-			name: "Directus",
-			color: "#2ECFA8",
+			name: 'Directus',
 		},
-		inputs: ["main"],
-		outputs: ["main"],
+		inputs: ['main'],
+		outputs: ['main'],
 		credentials: [
 			{
-				name: "directusApi",
+				name: 'directusApi',
 				required: true,
 			},
 		],
 		properties: [
 			{
-				displayName: "Resource",
-				name: "resource",
-				type: "options",
+				displayName: 'Resource',
+				name: 'resource',
+				type: 'options',
+				noDataExpression: true,
 				options: [
 					{
-						name: "Activity",
-						value: "activity",
+						name: 'Activity',
+						value: 'activity',
 					},
 					{
-						name: "Assets",
-						value: "assets",
+						name: 'Asset',
+						value: 'assets',
 					},
 					{
-						name: "Authentication",
-						value: "auth",
+						name: 'Authentication',
+						value: 'auth',
 					},
 					{
-						name: "Collections",
-						value: "collections",
+						name: 'Collection',
+						value: 'collections',
 					},
 					{
-						name: "Extensions",
-						value: "extensions",
+						name: 'Extension',
+						value: 'extensions',
 					},
 					{
-						name: "Fields",
-						value: "fields",
+						name: 'Field',
+						value: 'fields',
 					},
 					{
-						name: "Files",
-						value: "files",
+						name: 'File',
+						value: 'files',
 					},
 					{
-						name: "Folders",
-						value: "folders",
+						name: 'Folder',
+						value: 'folders',
 					},
 					{
-						name: "Items",
-						value: "items",
+						name: 'Item',
+						value: 'items',
 					},
 					{
-						name: "Permissions",
-						value: "permissions",
+						name: 'Permission',
+						value: 'permissions',
 					},
 					{
-						name: "Presets",
-						value: "presets",
+						name: 'Preset',
+						value: 'presets',
 					},
 					{
-						name: "Relations",
-						value: "relations",
+						name: 'Relation',
+						value: 'relations',
 					},
 					{
-						name: "Revisions",
-						value: "revisions",
+						name: 'Revision',
+						value: 'revisions',
 					},
 					{
-						name: "Roles",
-						value: "roles",
+						name: 'Role',
+						value: 'roles',
 					},
 					{
-						name: "Server",
-						value: "server",
+						name: 'Server',
+						value: 'server',
 					},
 					{
-						name: "Settings",
-						value: "settings",
+						name: 'Setting',
+						value: 'settings',
 					},
 					{
-						name: "Users",
-						value: "users",
+						name: 'User',
+						value: 'users',
 					},
 					{
-						name: "Utilities",
-						value: "utils",
+						name: 'Utility',
+						value: 'utils',
 					},
 					{
-						name: "Webhooks",
-						value: "webhooks",
+						name: 'Webhook',
+						value: 'webhooks',
 					},
 				],
-				default: "items",
+				default: 'items',
 				required: true,
-				description: "Resource to consume",
 			},
 
 			// ACTIVITY
@@ -293,18 +245,12 @@ export class Directus implements INodeType {
 	methods = {
 		loadOptions: {
 			// Get all Collections
-			async getCollections(
-				this: ILoadOptionsFunctions,
-			): Promise<INodePropertyOptions[]> {
+			async getCollections(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				try {
 					const returnData: INodePropertyOptions[] = [];
 
-					const collections = await directusApiRequest.call(
-						this,
-						"GET",
-						"collections",
-					);
-					console.log("1. collections :");
+					const collections = await directusApiRequest.call(this, 'GET', 'collections');
+					console.log('1. collections :');
 					for (const collection of collections.data) {
 						console.log(collection.collection);
 						const name = collection.collection;
@@ -321,18 +267,12 @@ export class Directus implements INodeType {
 				}
 			},
 			// Get only user created Collections
-			async getCustomCollections(
-				this: ILoadOptionsFunctions,
-			): Promise<INodePropertyOptions[]> {
+			async getCustomCollections(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				try {
 					const returnData: INodePropertyOptions[] = [];
 
-					const collections = await directusApiRequest.call(
-						this,
-						"GET",
-						"collections",
-					);
-					console.log("1. collections :");
+					const collections = await directusApiRequest.call(this, 'GET', 'collections');
+					console.log('1. collections :');
 					for (const collection of collections.data) {
 						console.log(collection.collection);
 						const name = collection.collection;
@@ -352,20 +292,12 @@ export class Directus implements INodeType {
 				}
 			},
 			// Get Relational fields in a collection
-			async getRelationalFields(
-				this: ILoadOptionsFunctions,
-			): Promise<INodePropertyOptions[]> {
+			async getRelationalFields(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				try {
-					const collection = this.getCurrentNodeParameter(
-						"collection",
-					) as string;
+					const collection = this.getCurrentNodeParameter('collection') as string;
 					const returnData: INodePropertyOptions[] = [];
 
-					const fields = await directusApiRequest.call(
-						this,
-						"GET",
-						`relations/${collection}`,
-					);
+					const fields = await directusApiRequest.call(this, 'GET', `relations/${collection}`);
 
 					for (const fieldObject of fields.data) {
 						//const nameInCapital = field.charAt(0).toUpperCase() + field.slice(1);
@@ -381,25 +313,18 @@ export class Directus implements INodeType {
 				}
 			},
 			// Get fields in a collection
-			async getFieldsInCollection(
-				this: ILoadOptionsFunctions,
-			): Promise<INodePropertyOptions[]> {
+			async getFieldsInCollection(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				try {
 					const collection =
-						(this.getCurrentNodeParameter("collection") as string) ??
-						(`directus_${this.getNodeParameter("resource", 0)}` as string);
+						(this.getCurrentNodeParameter('collection') as string) ??
+						(`directus_${this.getNodeParameter('resource', 0)}` as string);
 					const returnData: INodePropertyOptions[] = [];
 
-					const fields = await directusApiRequest.call(
-						this,
-						"GET",
-						`fields/${collection}`,
-					);
+					const fields = await directusApiRequest.call(this, 'GET', `fields/${collection}`);
 
 					for (const fieldObject of fields.data) {
 						const nameInCapital =
-							fieldObject.field.charAt(0).toUpperCase() +
-							fieldObject.field.slice(1);
+							fieldObject.field.charAt(0).toUpperCase() + fieldObject.field.slice(1);
 						returnData.push({
 							name: nameInCapital,
 							value: fieldObject.field,
@@ -412,18 +337,15 @@ export class Directus implements INodeType {
 				}
 			},
 			// Get User Roles
-			async getRoles(
-				this: ILoadOptionsFunctions,
-			): Promise<INodePropertyOptions[]> {
+			async getRoles(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				try {
 					const returnData: INodePropertyOptions[] = [];
 
-					const roles = await directusApiRequest.call(this, "GET", `roles`);
+					const roles = await directusApiRequest.call(this, 'GET', `roles`);
 
 					for (const roleObject of roles.data) {
 						const nameInCapital =
-							roleObject.name.charAt(0).toUpperCase() +
-							roleObject.name.slice(1);
+							roleObject.name.charAt(0).toUpperCase() + roleObject.name.slice(1);
 						returnData.push({
 							name: nameInCapital,
 							value: roleObject.id,
@@ -442,12 +364,10 @@ export class Directus implements INodeType {
 		//return [[]];
 
 		//Get credentials the user provided for this node
-		const credentials = (await this.getCredentials(
-			"directusApi",
-		)) as unknown as IDataObject;
+		//const credentials = (await this.getCredentials('directusApi')) as unknown as IDataObject;
 
 		const items = this.getInputData();
-		const length = items.length as unknown as number;
+		const length = items.length;
 
 		const returnItems: INodeExecutionData[] = [];
 		const returnData: any = [];
@@ -457,39 +377,32 @@ export class Directus implements INodeType {
 		let body: IDataObject = {};
 
 		let returnAll = false;
-		let endpoint = "";
+		let endpoint = '';
 		let requestMethod: IHttpRequestMethods;
 
-		const resource = this.getNodeParameter("resource", 0) as string;
-		const operation = this.getNodeParameter("operation", 0) as string;
+		const resource = this.getNodeParameter('resource', 0) as string;
+		const operation = this.getNodeParameter('operation', 0) as string;
 
 		for (let i = 0; i < length; i++) {
-			if (resource === "activity") {
-				if (operation == "get") {
+			if (resource === 'activity') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ??
-							null;
-						const fields = (additionalFields["fields"] as string) ?? {};
-						const meta = (additionalFields["meta"] as string) ?? null;
+							(this.getNodeParameter('additionalFields', i) as IDataObject) ?? null;
+						const fields = (additionalFields['fields'] as string) ?? {};
+						const meta = (additionalFields['meta'] as string) ?? null;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `activity/${ID}`;
 
 						let response;
 
-						if (fields) qs["fields"] = meta;
-						if (meta) qs["meta"] = meta;
+						if (fields) qs['fields'] = meta;
+						if (meta) qs['meta'] = meta;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -503,16 +416,14 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
 						if (additionalFields && additionalFields.aggregate) {
 							const aggregation = (additionalFields.aggregate as IDataObject)
@@ -524,7 +435,7 @@ export class Directus implements INodeType {
 							}
 						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `activity`;
 
 						let response;
@@ -533,28 +444,27 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						if (parametersAreJson) {
-							const queryParametersJson = this.getNodeParameter(
-								"queryParametersJson",
-								i,
-							) as object | string;
-							if (typeof queryParametersJson == "string") {
+							const queryParametersJson = this.getNodeParameter('queryParametersJson', i) as
+								| object
+								| string;
+							if (typeof queryParametersJson === 'string') {
 								qs = JSON.parse(queryParametersJson);
 							} else {
 								qs = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -565,15 +475,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -582,36 +486,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 						if (splitIntoItems === true && Array.isArray(responseData)) {
@@ -637,53 +539,43 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-						const meta = (additionalFields["meta"] as string) ?? "";
+						// const meta = (additionalFields['meta'] as string) ?? '';
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `activity/comment`;
 
 						if (parametersAreJson) {
-							const bodyParametersJson = this.getNodeParameter(
-								"bodyParametersJson",
-								i,
-							) as object | string;
-							if (typeof bodyParametersJson == "string") {
+							const bodyParametersJson = this.getNodeParameter('bodyParametersJson', i) as
+								| object
+								| string;
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
 							}
 						} else {
-							const collection = this.getNodeParameter(
-								"collection",
-								i,
-							) as string;
-							const comment = this.getNodeParameter("comment", i) as string;
-							const item = this.getNodeParameter("item", i) as number;
-							for (const key in additionalFields) {
+							const collection = this.getNodeParameter('collection', i) as string;
+							const comment = this.getNodeParameter('comment', i) as string;
+							const item = this.getNodeParameter('item', i) as number;
+							for (const key in Object.keys(additionalFields)) {
 								qs[key] = additionalFields[key];
 							}
-							body["comment"] = comment;
-							body["collection"] = collection;
-							body["item"] = item;
+							body['comment'] = comment;
+							body['collection'] = collection;
+							body['item'] = item;
 						}
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -698,32 +590,25 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const comment = this.getNodeParameter("comment", i) as string;
-						const ID = this.getNodeParameter("id", i) as number;
+						const comment = this.getNodeParameter('comment', i) as string;
+						const ID = this.getNodeParameter('id', i) as number;
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ??
-							{};
-						const meta = (additionalFields["meta"] as string) ?? "";
+							(this.getNodeParameter('additionalFields', i) as IDataObject) ?? {};
+						const meta = (additionalFields['meta'] as string) ?? '';
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `activity/comment/${ID}`;
 
-						if (meta) qs["meta"] = meta;
+						if (meta) qs['meta'] = meta;
 
-						body["comment"] = comment;
+						body['comment'] = comment;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -738,23 +623,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `activity/comment/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -769,51 +648,41 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "assets") {
-				if (operation == "get") {
+			if (resource === 'assets') {
+				if (operation === 'get') {
 					try {
-						const parametersAreJson = this.getNodeParameter(
-							"jsonParameters",
-							i,
-						) as boolean;
+						const parametersAreJson = this.getNodeParameter('jsonParameters', i) as boolean;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
 
-						const ID = (this.getNodeParameter("id", i) as string) ?? null;
-						const dataPropertyName = this.getNodeParameter(
-							"binaryPropertyName",
-							i,
-						) as string;
-						const includeFileData = this.getNodeParameter(
-							"includeFileData",
-							i,
-						) as boolean;
+						const ID = (this.getNodeParameter('id', i) as string) ?? null;
+						const dataPropertyName = this.getNodeParameter('binaryPropertyName', i) as string;
+						const includeFileData = this.getNodeParameter('includeFileData', i) as boolean;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `assets`;
 
 						let response;
-            console.log({ID});
+						console.log({ ID });
 						//if (ID) endpoint += `/${ID}`;
 
 						if (parametersAreJson) {
-							const queryParametersJson = this.getNodeParameter(
-								"queryParametersJson",
-								i,
-							) as object | string;
-							if (typeof queryParametersJson == "string") {
+							const queryParametersJson = this.getNodeParameter('queryParametersJson', i) as
+								| object
+								| string;
+							if (typeof queryParametersJson === 'string') {
 								body = JSON.parse(queryParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key of Object.keys(additionalFields)) {
-								if (key != "id" && key != "transforms") {
+								if (key !== 'id' && key !== 'transforms') {
 									qs[key] = additionalFields[key];
 								}
-								if (key == "transforms") {
-									if (typeof additionalFields[key] == "string") {
+								if (key === 'transforms') {
+									if (typeof additionalFields[key] === 'string') {
 										qs[key] = JSON.parse(additionalFields[key] as string);
 									} else {
 										qs[key] = JSON.parse(JSON.stringify(additionalFields[key]));
@@ -821,8 +690,8 @@ export class Directus implements INodeType {
 								}
 							}
 						}
-            console.log({ID});
-            console.log("Getting asset");
+						console.log({ ID });
+						console.log('Getting asset');
 						response = await directusApiAssetRequest.call(
 							this,
 							requestMethod,
@@ -831,7 +700,7 @@ export class Directus implements INodeType {
 							dataPropertyName,
 							qs,
 						);
-						if (!includeFileData) delete response.json["file"];
+						if (!includeFileData) delete response.json['file'];
 						responseData = response;
 						returnItems.push(responseData);
 					} catch (error) {
@@ -843,45 +712,41 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "auth") {
-				if (operation == "login") {
+			if (resource === 'auth') {
+				if (operation === 'login') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-						const email = !parametersAreJson
-							? (this.getNodeParameter("email", i) as string)
-							: "";
+						const email = !parametersAreJson ? (this.getNodeParameter('email', i) as string) : '';
 						const password = !parametersAreJson
-							? (this.getNodeParameter("password", i) as string)
-							: "";
+							? (this.getNodeParameter('password', i) as string)
+							: '';
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `auth/login`;
 
 						let response;
 
 						if (parametersAreJson) {
 							const data =
-								(this.getNodeParameter("bodyParametersJson", i) as
-									| object
-									| string) ?? {};
+								(this.getNodeParameter('bodyParametersJson', i) as object | string) ?? {};
 
-							if (typeof data == "string") {
+							if (typeof data === 'string') {
 								body = JSON.parse(data);
 							} else {
 								body = JSON.parse(JSON.stringify(data));
 							}
 						} else {
-							body["email"] = email;
-							body["password"] = password;
+							body['email'] = email;
+							body['password'] = password;
 
 							for (const key in additionalFields) {
-								if (["fields"].includes(key)) {
+								if (['fields'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										body[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										body[key] = JSON.stringify(object);
@@ -892,14 +757,8 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -913,24 +772,18 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "logout") {
+				if (operation === 'logout') {
 					try {
-						const refreshToken = this.getNodeParameter("data", i) as string;
+						const refreshToken = this.getNodeParameter('data', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `auth/logout`;
 
 						let response;
-						body["refresh_token"] = refreshToken;
+						body['refresh_token'] = refreshToken;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -944,27 +797,18 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "refreshToken") {
+				if (operation === 'refreshToken') {
 					try {
-						const refreshToken = this.getNodeParameter(
-							"refreshToken",
-							i,
-						) as string;
+						const refreshToken = this.getNodeParameter('refreshToken', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `auth/refresh`;
 
 						let response;
-						body["refresh_token"] = refreshToken;
+						body['refresh_token'] = refreshToken;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -978,30 +822,23 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "requestReset") {
+				if (operation === 'requestReset') {
 					try {
-						const email = this.getNodeParameter("email", i) as string;
+						const email = this.getNodeParameter('email', i) as string;
 
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ||
-							{};
-						const resetUrl = (additionalFields?.["resetUrl"] as string) ?? null;
+							(this.getNodeParameter('additionalFields', i) as IDataObject) || {};
+						const resetUrl = (additionalFields?.['resetUrl'] as string) ?? null;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `auth/password/request`;
 
 						let response;
-						body["email"] = email;
-						if (resetUrl) body["reset_url"] = resetUrl;
+						body['email'] = email;
+						if (resetUrl) body['reset_url'] = resetUrl;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1015,44 +852,35 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "resetPassword") {
+				if (operation === 'resetPassword') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						//const additionalFields = !parametersAreJson ? (this.getNodeParameter('additionalFields', i) as IDataObject) : {};
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `auth/password/reset`;
 
 						let response;
 
 						if (parametersAreJson) {
 							const bodyParametersJson =
-								(this.getNodeParameter("bodyParametersJson", i) as
-									| object
-									| string) ?? {};
-							if (typeof bodyParametersJson == "string") {
+								(this.getNodeParameter('bodyParametersJson', i) as object | string) ?? {};
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
 							}
 						} else {
-							const token = (this.getNodeParameter("token", i) as string) ?? "";
-							const password =
-								(this.getNodeParameter("password", i) as string) ?? "";
+							const token = (this.getNodeParameter('token', i) as string) ?? '';
+							const password = (this.getNodeParameter('password', i) as string) ?? '';
 
-							body["token"] = token;
-							body["password"] = password;
+							body['token'] = token;
+							body['password'] = password;
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1066,26 +894,19 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `auth/oauth`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						console.log(response);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1106,23 +927,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "startOauthFlow") {
+				if (operation === 'startOauthFlow') {
 					try {
-						const provider = this.getNodeParameter("provider", i) as string;
+						const provider = this.getNodeParameter('provider', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `auth/oauth/${provider}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1137,24 +952,18 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "collections") {
-				if (operation == "get") {
+			if (resource === 'collections') {
+				if (operation === 'get') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `collections/${collection}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1169,25 +978,18 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `collections`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1208,35 +1010,35 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const collection = !parametersAreJson
-							? (this.getNodeParameter("collection", i) as string)
+							? (this.getNodeParameter('collection', i) as string)
 							: null;
 
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
 						const data = parametersAreJson
-							? (this.getNodeParameter("bodyParametersJson", i) as object)
+							? (this.getNodeParameter('bodyParametersJson', i) as object)
 							: {};
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `collections`;
 
 						if (parametersAreJson) {
-							if (typeof data == "string") {
+							if (typeof data === 'string') {
 								body = JSON.parse(data);
 							} else {
 								body = JSON.parse(JSON.stringify(data));
 							}
 						} else {
 							for (const key in data) {
-								if (["fields"].includes(key)) {
+								if (['fields'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										body[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										body[key] = JSON.stringify(object);
@@ -1245,20 +1047,14 @@ export class Directus implements INodeType {
 									body[key] = additionalFields[key];
 								}
 							}
-							body["collection"] = collection;
+							body['collection'] = collection;
 						}
 						let response;
 
 						response =
-							(await directusApiRequest.call(
-								this,
-								requestMethod,
-								endpoint,
-								body,
-								qs,
-							)) ?? null;
+							(await directusApiRequest.call(this, requestMethod, endpoint, body, qs)) ?? null;
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {} ?? {};
@@ -1272,33 +1068,26 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ??
-							{};
-						const data = additionalFields["meta"] as object;
+							(this.getNodeParameter('additionalFields', i) as IDataObject) ?? {};
+						const data = additionalFields['meta'] as object;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `collections/${collection}`;
 
 						let response;
-						if (typeof data == "string") {
-							body["meta"] = JSON.parse(data);
+						if (typeof data === 'string') {
+							body['meta'] = JSON.parse(data);
 						} else {
-							body["meta"] = JSON.parse(JSON.stringify(data));
+							body['meta'] = JSON.parse(JSON.stringify(data));
 						}
-						body["collection"] = collection;
+						body['collection'] = collection;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1312,23 +1101,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `collections/${collection}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1344,27 +1127,20 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "extensions") {
-				if (operation == "list") {
+			if (resource === 'extensions') {
+				if (operation === 'list') {
 					try {
-						const type = this.getNodeParameter("type", i) as string;
+						const type = this.getNodeParameter('type', i) as string;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `extensions/${type}`;
 
 						let response;
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1384,36 +1160,30 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "fields") {
-				if (operation === "create") {
+			if (resource === 'fields') {
+				if (operation === 'create') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const parametersAreJson = this.getNodeParameter(
-							"jsonParameters",
-							0,
-						) as boolean;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const parametersAreJson = this.getNodeParameter('jsonParameters', 0) as boolean;
 
-						const type = this.getNodeParameter("type", i) as string;
-						const field = this.getNodeParameter("field", i) as string;
+						const type = this.getNodeParameter('type', i) as string;
+						const field = this.getNodeParameter('field', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `fields/${collection}`;
 
 						body = { type, field };
 
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ??
-							null;
+							(this.getNodeParameter('additionalFields', i) as IDataObject) ?? null;
 
 						for (const key of Object.keys(additionalFields)) {
 							body[key] = additionalFields[key];
 						}
 
 						if (parametersAreJson) {
-							const bodyParametersJson = additionalFields.bodyParametersJson as
-								| object
-								| string;
-							if (typeof bodyParametersJson == "string") {
+							const bodyParametersJson = additionalFields.bodyParametersJson as object | string;
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(body));
@@ -1422,17 +1192,11 @@ export class Directus implements INodeType {
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						responseData = response.data ?? {};
 
 						//////////////////////////////////
-						const timerLabel = `${resource} | ${operation}`;
+						// const timerLabel = `${resource} | ${operation}`;
 						returnItems.push({ json: responseData });
 					} catch (error) {
 						if (this.continueOnFail()) {
@@ -1442,23 +1206,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "get") {
+				if (operation === 'get') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const field = this.getNodeParameter("field", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const field = this.getNodeParameter('field', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `fields/${collection}/${field}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						responseData = response.data ?? {};
 
 						//////////////////////////////////
@@ -1471,16 +1229,15 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "list") {
+				if (operation === 'list') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
 						//returnAll = this.getNodeParameter('returnAll', i) as boolean ?? null;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `fields/${collection}`;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? null;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? null;
 						/*
 						const additionalFields =
 							(this.getNodeParameter('additionalFields', i) as IDataObject) ??
@@ -1492,13 +1249,7 @@ export class Directus implements INodeType {
 						*/
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						/* 
 						if (returnAll === true) {
 							qs.limit = -1;
@@ -1518,24 +1269,24 @@ export class Directus implements INodeType {
 
 						//////////////////////////////////
 						const timerLabel = `${resource} | ${operation}`;
-						console.log("Start");
+						console.log('Start');
 						console.time(timerLabel);
 						////////////////////////////////////
 						if (splitIntoItems === true && Array.isArray(responseData)) {
 							responseData.forEach((item, index) => {
 								returnItems.push({ json: item });
-								console.log("1.");
+								console.log('1.');
 								console.log(index);
 								console.timeLog(timerLabel);
 							});
-							console.log("2.");
+							console.log('2.');
 							console.timeLog(timerLabel);
 						} else {
 							returnItems.push({ json: responseData });
-							console.log("3.");
+							console.log('3.');
 							console.timeLog(timerLabel);
 						}
-						console.log("End");
+						console.log('End');
 						console.timeEnd(timerLabel);
 					} catch (error) {
 						if (this.continueOnFail()) {
@@ -1545,23 +1296,16 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "listAll") {
+				if (operation === 'listAll') {
 					try {
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `fields`;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? null;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? null;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
 						responseData = response.data ?? {};
 
@@ -1585,25 +1329,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "update") {
+				if (operation === 'update') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-						const field = this.getNodeParameter("field", i) as string;
+						const field = this.getNodeParameter('field', i) as string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `fields/${collection}/${field}`;
 
 						if (parametersAreJson) {
-							const bodyParametersJson = this.getNodeParameter(
-								"bodyParametersJson",
-								i,
-							) as object;
-							if (typeof bodyParametersJson == "string") {
+							const bodyParametersJson = this.getNodeParameter('bodyParametersJson', i) as object;
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
@@ -1616,13 +1357,7 @@ export class Directus implements INodeType {
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						responseData = response.data ?? {};
 						//////////////////////////////////
 						returnItems.push({ json: responseData });
@@ -1634,23 +1369,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "delete") {
+				if (operation === 'delete') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const field = this.getNodeParameter("field", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const field = this.getNodeParameter('field', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `fields/${collection}/${field}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						responseData = response;
 						//////////////////////////////////
 						returnItems.push({ json: responseData });
@@ -1663,24 +1392,18 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "files") {
-				if (operation == "get") {
+			if (resource === 'files') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `files/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1695,30 +1418,26 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? null;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? null;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? null;
-						const parametersAreJson = this.getNodeParameter(
-							"jsonParameters",
-							i,
-						) as boolean;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? null;
+						const parametersAreJson = this.getNodeParameter('jsonParameters', i) as boolean;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `files`;
 
 						let response;
@@ -1727,38 +1446,32 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						for (const key of Object.keys(additionalFields)) {
-							if (!["deep", "filter"].includes(key)) {
+							if (!['deep', 'filter'].includes(key)) {
 								qs[key] = additionalFields[key];
 							} else {
 								const data = additionalFields[key];
 
-								if (data && typeof data == "string") {
+								if (data && typeof data === 'string') {
 									qs[key] = JSON.parse(data);
-								} else if (data && typeof data != "string") {
+								} else if (data && typeof data !== 'string') {
 									qs[key] = JSON.parse(JSON.stringify(data));
 								} else {
-									qs[key] = "";
+									qs[key] = '';
 								}
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1779,19 +1492,15 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
-						const sendBinaryData = this.getNodeParameter(
-							"sendBinaryData",
-							i,
-						) as boolean;
+						const sendBinaryData = this.getNodeParameter('sendBinaryData', i) as boolean;
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ??
-							null;
+							(this.getNodeParameter('additionalFields', i) as IDataObject) ?? null;
 
 						const data = additionalFields.data ?? ({} as object | string);
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `files`;
 
 						let response;
@@ -1799,8 +1508,7 @@ export class Directus implements INodeType {
 						if (sendBinaryData) {
 							const item = items[i].binary as IBinaryKeyData;
 							const binaryPropertyName =
-								(this.getNodeParameter("binaryPropertyName", i) as string) ??
-								null;
+								(this.getNodeParameter('binaryPropertyName', i) as string) ?? null;
 							const binaryData = item[binaryPropertyName] as IBinaryData;
 							const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
 								i,
@@ -1808,7 +1516,7 @@ export class Directus implements INodeType {
 							);
 
 							//const formData = new FormData();
-              const formData = {};
+							const formData = {};
 							Object.assign(formData, {
 								file: {
 									value: binaryDataBuffer,
@@ -1818,8 +1526,8 @@ export class Directus implements INodeType {
 									},
 								},
 							});
-              
-             /*
+
+							/*
               const file = {
                 value: binaryDataBuffer,
                 options: {
@@ -1830,14 +1538,14 @@ export class Directus implements INodeType {
               formData.append('file',file);
               */
 
-							if (data && typeof data == "string") {
+							if (data && typeof data === 'string') {
 								body = JSON.parse(data);
-							} else if (data && typeof data != "string") {
+							} else if (data && typeof data !== 'string') {
 								body = JSON.parse(JSON.stringify(data));
 							} else {
 								body = {};
 							}
-              
+
 							response = await directusApiFileRequest.call(
 								this,
 								requestMethod,
@@ -1846,23 +1554,18 @@ export class Directus implements INodeType {
 								body,
 							);
 						} else {
-							if (data && typeof data == "string") {
+							if (data && typeof data === 'string') {
 								body = JSON.parse(data);
-							} else if (data && typeof data != "string") {
+							} else if (data && typeof data !== 'string') {
 								body = JSON.parse(JSON.stringify(data));
 							} else {
 								body = {};
 							}
 
-							response = await directusApiRequest.call(
-								this,
-								requestMethod,
-								endpoint,
-								body,
-							);
+							response = await directusApiRequest.call(this, requestMethod, endpoint, body);
 						}
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = JSON.parse(JSON.stringify(response)).data;
@@ -1877,36 +1580,29 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "importFile") {
+				if (operation === 'importFile') {
 					try {
-						const URL = this.getNodeParameter("url", i) as string;
+						const URL = this.getNodeParameter('url', i) as string;
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ??
-							null;
+							(this.getNodeParameter('additionalFields', i) as IDataObject) ?? null;
 						const data = (additionalFields?.data as object | string) ?? null;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `files/import`;
 
 						let response;
-						if (typeof data == "string") {
-							body["data"] = JSON.parse(data);
-							body["url"] = URL;
-						} else if (data && typeof data != "string") {
-							body["data"] = JSON.parse(JSON.stringify(data));
-							body["url"] = URL;
+						if (typeof data === 'string') {
+							body['data'] = JSON.parse(data);
+							body['url'] = URL;
+						} else if (data && typeof data !== 'string') {
+							body['data'] = JSON.parse(JSON.stringify(data));
+							body['url'] = URL;
 						} else {
-							body["url"] = URL;
+							body['url'] = URL;
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -1921,20 +1617,16 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
-						const sendBinaryData = this.getNodeParameter(
-							"sendBinaryData",
-							i,
-						) as boolean;
+						const ID = this.getNodeParameter('id', i) as string;
+						const sendBinaryData = this.getNodeParameter('sendBinaryData', i) as boolean;
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ??
-							null;
+							(this.getNodeParameter('additionalFields', i) as IDataObject) ?? null;
 
 						const data = additionalFields.data ?? ({} as object | string);
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `files/${ID}`;
 
 						let response;
@@ -1942,8 +1634,7 @@ export class Directus implements INodeType {
 						if (sendBinaryData) {
 							const item = items[i].binary as IBinaryKeyData;
 							const binaryPropertyName =
-								(this.getNodeParameter("binaryPropertyName", i) as string) ??
-								null;
+								(this.getNodeParameter('binaryPropertyName', i) as string) ?? null;
 							const binaryData = item[binaryPropertyName] as IBinaryData;
 							const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
 								i,
@@ -1961,9 +1652,9 @@ export class Directus implements INodeType {
 								},
 							});
 
-							if (data && typeof data == "string") {
+							if (data && typeof data === 'string') {
 								body = JSON.parse(data);
-							} else if (data && typeof data != "string") {
+							} else if (data && typeof data !== 'string') {
 								body = JSON.parse(JSON.stringify(data));
 							} else {
 								body = {};
@@ -1977,23 +1668,18 @@ export class Directus implements INodeType {
 								body,
 							);
 						} else {
-							if (data && typeof data == "string") {
+							if (data && typeof data === 'string') {
 								body = JSON.parse(data);
-							} else if (data && typeof data != "string") {
+							} else if (data && typeof data !== 'string') {
 								body = JSON.parse(JSON.stringify(data));
 							} else {
 								body = {};
 							}
 
-							response = await directusApiRequest.call(
-								this,
-								requestMethod,
-								endpoint,
-								body,
-							);
+							response = await directusApiRequest.call(this, requestMethod, endpoint, body);
 						}
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = JSON.parse(JSON.stringify(response)).data;
@@ -2008,28 +1694,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMultiple") {
+				if (operation === 'updateMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `files`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2043,23 +1723,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `files/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2074,28 +1748,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "deleteMultiple") {
+				if (operation === 'deleteMultiple') {
 					try {
-						const data = this.getNodeParameter("keys", i) as object | string;
+						const data = this.getNodeParameter('keys', i) as object | string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `files`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2111,24 +1779,18 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "folders") {
-				if (operation == "get") {
+			if (resource === 'folders') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `folders/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2142,29 +1804,28 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `folders`;
 
 						let response;
@@ -2173,8 +1834,8 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
@@ -2182,19 +1843,17 @@ export class Directus implements INodeType {
 
 						if (parametersAreJson) {
 							const queryParametersJson =
-								(this.getNodeParameter("queryParametersJson", i) as
-									| object
-									| string) ?? {};
-							if (typeof queryParametersJson == "string") {
+								(this.getNodeParameter('queryParametersJson', i) as object | string) ?? {};
+							if (typeof queryParametersJson === 'string') {
 								qs = JSON.parse(queryParametersJson);
 							} else {
 								qs = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -2205,15 +1864,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2222,39 +1875,37 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
 							//const data = binaryData!.toString('base64');
 							//binary = { [binaryPropertyName]: {data,fileName,mimeType} as IBinaryData } as IBinaryKeyData;
 							//binary: IBinaryKeyData = {};
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 						if (splitIntoItems === true && Array.isArray(responseData)) {
@@ -2280,49 +1931,38 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-						const name = !parametersAreJson
-							? (this.getNodeParameter("name", i) as string)
-							: "";
-						const parent = (additionalFields?.["parent"] as string) ?? "";
-						const data =
-							(additionalFields["bodyParametersJson"] as object) ?? {};
+						const name = !parametersAreJson ? (this.getNodeParameter('name', i) as string) : '';
+						// const parent = (additionalFields?.['parent'] as string) ?? '';
+						// const data = (additionalFields['bodyParametersJson'] as object) ?? {};
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `folders`;
 
 						if (parametersAreJson) {
-							const data = this.getNodeParameter("bodyParametersJson", i) as
-								| object
-								| string;
-							if (typeof data == "string") {
+							const data = this.getNodeParameter('bodyParametersJson', i) as object | string;
+							if (typeof data === 'string') {
 								body = JSON.parse(data);
 							} else {
 								body = JSON.parse(JSON.stringify(data));
 							}
 						} else {
-							body["name"] = name;
-							for (const key in additionalFields) {
+							body['name'] = name;
+							for (const key in Object.keys(additionalFields)) {
 								body[key] = additionalFields[key];
 							}
 						}
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2336,28 +1976,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "createMultiple") {
+				if (operation === 'createMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `folders`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2372,35 +2006,33 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `folders/${ID}`;
 
 						let response;
 
 						if (parametersAreJson) {
 							const bodyParametersJson =
-								(this.getNodeParameter("bodyParametersJson", i) as
-									| object
-									| string) ?? {};
-							if (typeof bodyParametersJson == "string") {
+								(this.getNodeParameter('bodyParametersJson', i) as object | string) ?? {};
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										body[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										body[key] = JSON.stringify(object);
@@ -2411,14 +2043,8 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2432,28 +2058,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMultiple") {
+				if (operation === 'updateMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `folders`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2468,23 +2088,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `folders/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2498,28 +2112,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "deleteMultiple") {
+				if (operation === 'deleteMultiple') {
 					try {
-						const data = this.getNodeParameter("keys", i) as object | string;
+						const data = this.getNodeParameter('keys', i) as object | string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `folders`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2535,25 +2143,19 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "items") {
-				if (operation == "get") {
+			if (resource === 'items') {
+				if (operation === 'get') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const ID = this.getNodeParameter("id", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `items/${collection}/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2568,31 +2170,30 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
 
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `items/${collection}`;
 
 						let response;
@@ -2601,28 +2202,27 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						if (parametersAreJson) {
-							const queryParametersJson = this.getNodeParameter(
-								"queryParametersJson",
-								i,
-							) as object | string;
-							if (typeof queryParametersJson == "string") {
+							const queryParametersJson = this.getNodeParameter('queryParametersJson', i) as
+								| object
+								| string;
+							if (typeof queryParametersJson === 'string') {
 								qs = JSON.parse(queryParametersJson);
 							} else {
 								qs = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -2633,15 +2233,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2650,36 +2244,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 						if (splitIntoItems === true && Array.isArray(responseData)) {
@@ -2705,29 +2297,23 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `items/${collection}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2737,34 +2323,29 @@ export class Directus implements INodeType {
 					} catch (error) {
 						if (this.continueOnFail()) {
 							returnItems.push({ json: { error: error.message } });
+							returnData.push({ error: error.message, json: {}, itemIndex: i });
 							continue;
 						}
 						throw error;
 					}
 				}
-				if (operation == "createMultiple") {
+				if (operation === 'createMultiple') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `items/${collection}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2779,30 +2360,24 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const ID = this.getNodeParameter("id", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `items/${collection}/${ID}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2817,30 +2392,23 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMultiple") {
+				if (operation === 'updateMultiple') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const ID = this.getNodeParameter("id", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
-						endpoint = `items/${collection}/${ID}`;
+						requestMethod = 'PATCH';
+						endpoint = `items/${collection}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2855,24 +2423,18 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const ID = this.getNodeParameter("id", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `items/${collection}/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2887,29 +2449,23 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "deleteMultiple") {
+				if (operation === 'deleteMultiple') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `items/${collection}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2925,24 +2481,18 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "permissions") {
-				if (operation == "get") {
+			if (resource === 'permissions') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `permissions/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -2957,28 +2507,27 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `permissions`;
 
 						let response;
@@ -2987,28 +2536,27 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						if (parametersAreJson) {
-							const bodyParametersJson = this.getNodeParameter(
-								"bodyParametersJson",
-								i,
-							) as object | string;
-							if (typeof bodyParametersJson == "string") {
+							const bodyParametersJson = this.getNodeParameter('bodyParametersJson', i) as
+								| object
+								| string;
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -3019,15 +2567,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3037,36 +2579,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 
@@ -3093,43 +2633,32 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `permissions`;
 
 						let response;
 
 						if (parametersAreJson) {
-							const data = this.getNodeParameter("bodyParametersJson", i) as
-								| object
-								| string;
-							if (typeof data == "string") {
+							const data = this.getNodeParameter('bodyParametersJson', i) as object | string;
+							if (typeof data === 'string') {
 								body = JSON.parse(data);
 							} else {
 								body = JSON.parse(JSON.stringify(data));
 							}
 						} else {
-							const action = this.getNodeParameter("collection", i) as string;
-							const collection = this.getNodeParameter(
-								"collection",
-								i,
-							) as string;
-							body["collection"] = collection;
-							body["action"] = action;
+							const action = this.getNodeParameter('collection', i) as string;
+							const collection = this.getNodeParameter('collection', i) as string;
+							body['collection'] = collection;
+							body['action'] = action;
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3144,28 +2673,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "createMultiple") {
+				if (operation === 'createMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `permissions`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3180,29 +2703,23 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const ID = this.getNodeParameter('id', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `permissions/${ID}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3217,28 +2734,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMultiple") {
+				if (operation === 'updateMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `permissions`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3253,23 +2764,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `permissions/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3284,28 +2789,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "deleteMultiple") {
+				if (operation === 'deleteMultiple') {
 					try {
-						const data = this.getNodeParameter("keys", i) as object | string;
+						const data = this.getNodeParameter('keys', i) as object | string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `permissions`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3320,24 +2819,18 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "presets") {
-				if (operation == "get") {
+			if (resource === 'presets') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `presets/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3352,28 +2845,27 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `presets`;
 
 						let response;
@@ -3382,28 +2874,27 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						if (parametersAreJson) {
-							const bodyParametersJson = this.getNodeParameter(
-								"bodyParametersJson",
-								i,
-							) as object | string;
-							if (typeof bodyParametersJson == "string") {
+							const bodyParametersJson = this.getNodeParameter('bodyParametersJson', i) as
+								| object
+								| string;
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -3414,15 +2905,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3432,36 +2917,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 
@@ -3488,33 +2971,25 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
-						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+						// const parametersAreJson =
+						// 	(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `presets`;
 
 						let response;
 
-						const data = this.getNodeParameter("bodyParametersJson", i) as
-							| object
-							| string;
-						if (typeof data == "string") {
+						const data = this.getNodeParameter('bodyParametersJson', i) as object | string;
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3529,28 +3004,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "createMultiple") {
+				if (operation === 'createMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `presets`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3565,29 +3034,23 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const ID = this.getNodeParameter('id', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `presets/${ID}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3602,28 +3065,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMultiple") {
+				if (operation === 'updateMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `presets`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3638,23 +3095,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `presets/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3669,28 +3120,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "deleteMultiple") {
+				if (operation === 'deleteMultiple') {
 					try {
-						const data = this.getNodeParameter("keys", i) as object | string;
+						const data = this.getNodeParameter('keys', i) as object | string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `presets`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3705,16 +3150,15 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "relations") {
-				if (operation === "create") {
+			if (resource === 'relations') {
+				if (operation === 'create') {
 					try {
-						const data =
-							(this.getNodeParameter("data", i) as object | string) ?? {};
+						const data = (this.getNodeParameter('data', i) as object | string) ?? {};
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `relations`;
 
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
@@ -3722,17 +3166,11 @@ export class Directus implements INodeType {
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						responseData = response.data ?? {};
 
 						//////////////////////////////////
-						const timerLabel = `${resource} | ${operation}`;
+						// const timerLabel = `${resource} | ${operation}`;
 						returnItems.push({ json: responseData });
 					} catch (error) {
 						if (this.continueOnFail()) {
@@ -3742,23 +3180,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "get") {
+				if (operation === 'get') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const field = this.getNodeParameter("field", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const field = this.getNodeParameter('field', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `relations/${collection}/${field}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						responseData = response.data ?? {};
 
 						//////////////////////////////////
@@ -3771,39 +3203,26 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "list") {
+				if (operation === 'list') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `relations/${collection}`;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? null;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? null;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
 						responseData = response.data ?? {};
 
 						//////////////////////////////////
 						const timerLabel = `${resource} | ${operation}`;
-						console.log("Start");
+						console.log('Start');
 						console.time(timerLabel);
 						////////////////////////////////////
 						if (splitIntoItems === true && Array.isArray(responseData)) {
@@ -3821,23 +3240,16 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "listAll") {
+				if (operation === 'listAll') {
 					try {
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `relations`;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? null;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? null;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
 						responseData = response.data ?? {};
 
@@ -3857,17 +3269,16 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "update") {
+				if (operation === 'update') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const field = this.getNodeParameter("field", i) as string;
-						const data =
-							(this.getNodeParameter("data", i) as object | string) ?? {};
+						const collection = this.getNodeParameter('collection', i) as string;
+						const field = this.getNodeParameter('field', i) as string;
+						const data = (this.getNodeParameter('data', i) as object | string) ?? {};
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `relations/${collection}/${field}`;
 
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
@@ -3875,13 +3286,7 @@ export class Directus implements INodeType {
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						responseData = response.data ?? {};
 						//////////////////////////////////
 						returnItems.push({ json: responseData });
@@ -3893,23 +3298,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation === "delete") {
+				if (operation === 'delete') {
 					try {
-						const collection = this.getNodeParameter("collection", i) as string;
-						const field = this.getNodeParameter("field", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
+						const field = this.getNodeParameter('field', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `relations/${collection}/${field}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						responseData = response;
 						//////////////////////////////////
 						returnItems.push({ json: responseData });
@@ -3922,24 +3321,18 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "revisions") {
-				if (operation == "get") {
+			if (resource === 'revisions') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `revisions/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -3954,29 +3347,28 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `revisions`;
 
 						let response;
@@ -3985,28 +3377,27 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						if (parametersAreJson) {
-							const queryParametersJson = this.getNodeParameter(
-								"queryParametersJson",
-								i,
-							) as object | string;
-							if (typeof queryParametersJson == "string") {
+							const queryParametersJson = this.getNodeParameter('queryParametersJson', i) as
+								| object
+								| string;
+							if (typeof queryParametersJson === 'string') {
 								qs = JSON.parse(queryParametersJson);
 							} else {
 								qs = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -4017,15 +3408,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4034,36 +3419,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 						if (splitIntoItems === true && Array.isArray(responseData)) {
@@ -4090,24 +3473,18 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "roles") {
-				if (operation == "get") {
+			if (resource === 'roles') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `roles/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4122,28 +3499,27 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `roles`;
 
 						let response;
@@ -4152,28 +3528,27 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						if (parametersAreJson) {
-							const bodyParametersJson = this.getNodeParameter(
-								"bodyParametersJson",
-								i,
-							) as object | string;
-							if (typeof bodyParametersJson == "string") {
+							const bodyParametersJson = this.getNodeParameter('bodyParametersJson', i) as
+								| object
+								| string;
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -4184,15 +3559,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4202,36 +3571,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 
@@ -4258,33 +3625,25 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
-						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+						// const parametersAreJson =
+						// 	(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `roles`;
 
 						let response;
 
-						const data = this.getNodeParameter("bodyParametersJson", i) as
-							| object
-							| string;
-						if (typeof data == "string") {
+						const data = this.getNodeParameter('bodyParametersJson', i) as object | string;
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4299,28 +3658,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "createMultiple") {
+				if (operation === 'createMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `roles`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4335,29 +3688,23 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const ID = this.getNodeParameter('id', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `roles/${ID}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4372,28 +3719,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMultiple") {
+				if (operation === 'updateMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `roles`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4408,23 +3749,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `roles/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4439,28 +3774,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "deleteMultiple") {
+				if (operation === 'deleteMultiple') {
 					try {
-						const data = this.getNodeParameter("keys", i) as object | string;
+						const data = this.getNodeParameter('keys', i) as object | string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `roles`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4475,22 +3804,16 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "server") {
-				if (operation == "systemInfo") {
+			if (resource === 'server') {
+				if (operation === 'systemInfo') {
 					try {
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `server/info`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4505,21 +3828,15 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "pingServer") {
+				if (operation === 'pingServer') {
 					try {
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `server/ping`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response;
@@ -4533,21 +3850,15 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "getGraphQL") {
+				if (operation === 'getGraphQL') {
 					try {
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `server/specs/graphql`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response;
@@ -4561,21 +3872,15 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "getOpenAPI") {
+				if (operation === 'getOpenAPI') {
 					try {
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `server/specs/oas`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response;
@@ -4589,21 +3894,15 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "serverHealth") {
+				if (operation === 'serverHealth') {
 					try {
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `server/health`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response;
@@ -4618,35 +3917,34 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "settings") {
-				if (operation == "get") {
+			if (resource === 'settings') {
+				if (operation === 'get') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `settings`;
 
 						let response;
 
 						if (parametersAreJson) {
-							const queryParametersJson = this.getNodeParameter(
-								"queryParametersJson",
-								i,
-							) as object | string;
-							if (typeof queryParametersJson == "string") {
+							const queryParametersJson = this.getNodeParameter('queryParametersJson', i) as
+								| object
+								| string;
+							if (typeof queryParametersJson === 'string') {
 								qs = JSON.parse(queryParametersJson);
 							} else {
 								qs = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -4657,15 +3955,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4675,36 +3967,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 
@@ -4731,35 +4021,33 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-						const data =
-							(this.getNodeParameter("data", i) as object | string) ?? {};
+						const data = (this.getNodeParameter('data', i) as object | string) ?? {};
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `settings`;
 
 						let response;
 						if (parametersAreJson) {
-							const queryParametersJson = this.getNodeParameter(
-								"queryParametersJson",
-								i,
-							) as object | string;
-							if (typeof queryParametersJson == "string") {
+							const queryParametersJson = this.getNodeParameter('queryParametersJson', i) as
+								| object
+								| string;
+							if (typeof queryParametersJson === 'string') {
 								qs = JSON.parse(queryParametersJson);
 							} else {
 								qs = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -4770,20 +4058,14 @@ export class Directus implements INodeType {
 							}
 						}
 
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4798,24 +4080,18 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "users") {
-				if (operation == "get") {
+			if (resource === 'users') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `users/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4830,29 +4106,28 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `users`;
 
 						let response;
@@ -4861,28 +4136,27 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						if (parametersAreJson) {
-							const queryParametersJson = this.getNodeParameter(
-								"queryParametersJson",
-								i,
-							) as object | string;
-							if (typeof queryParametersJson == "string") {
+							const queryParametersJson = this.getNodeParameter('queryParametersJson', i) as
+								| object
+								| string;
+							if (typeof queryParametersJson === 'string') {
 								qs = JSON.parse(queryParametersJson);
 							} else {
 								qs = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -4893,15 +4167,9 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -4910,36 +4178,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 						if (splitIntoItems === true && Array.isArray(responseData)) {
@@ -4965,34 +4231,33 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `users`;
 
 						let response;
 
 						if (parametersAreJson) {
-							const bodyParametersJson = this.getNodeParameter(
-								"bodyParametersJson",
-								i,
-							) as object | string;
-							if (typeof bodyParametersJson == "string") {
+							const bodyParametersJson = this.getNodeParameter('bodyParametersJson', i) as
+								| object
+								| string;
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										body[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										body[key] = JSON.stringify(object);
@@ -5001,18 +4266,12 @@ export class Directus implements INodeType {
 									body[key] = additionalFields[key];
 								}
 							}
-							body["email"] = this.getNodeParameter("email", i) as string;
-							body["password"] = this.getNodeParameter("password", i) as string;
+							body['email'] = this.getNodeParameter('email', i) as string;
+							body['password'] = this.getNodeParameter('password', i) as string;
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5027,28 +4286,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "createMultiple") {
+				if (operation === 'createMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `users`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5063,29 +4316,23 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const ID = this.getNodeParameter('id', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `users/${ID}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5100,28 +4347,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMultiple") {
+				if (operation === 'updateMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `users`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5136,23 +4377,17 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `users/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5167,28 +4402,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "deleteMultiple") {
+				if (operation === 'deleteMultiple') {
 					try {
-						const data = this.getNodeParameter("keys", i) as object | string;
+						const data = this.getNodeParameter('keys', i) as object | string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `users`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5203,21 +4432,15 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "getCurrent") {
+				if (operation === 'getCurrent') {
 					try {
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `users/me`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5232,28 +4455,22 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMe") {
+				if (operation === 'updateMe') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `users/me`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5268,25 +4485,24 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "inviteUser") {
+				if (operation === 'inviteUser') {
 					try {
-						const email = this.getNodeParameter("email", i) as string;
-						const role = this.getNodeParameter("role", i) as string;
+						const email = this.getNodeParameter('email', i) as string;
+						const role = this.getNodeParameter('role', i) as string;
 						const additionalFields =
-							(this.getNodeParameter("additionalFields", i) as IDataObject) ??
-							{};
+							(this.getNodeParameter('additionalFields', i) as IDataObject) ?? {};
 
-						const data = this.getNodeParameter("data", i) as object | string;
+						// const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `users/invite`;
 
 						let response;
 
 						for (const key in additionalFields) {
-							if (["deep", "filter"].includes(key)) {
+							if (['deep', 'filter'].includes(key)) {
 								const object = additionalFields[key] as object | string;
-								if (typeof object == "string") {
+								if (typeof object === 'string') {
 									body[key] = JSON.stringify(JSON.parse(object)) as string;
 								} else {
 									body[key] = JSON.stringify(object);
@@ -5295,17 +4511,11 @@ export class Directus implements INodeType {
 								body[key] = additionalFields[key];
 							}
 						}
-						body["email"] = email;
-						body["role"] = role;
+						body['email'] = email;
+						body['role'] = role;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5320,25 +4530,19 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "acceptUserInvite") {
+				if (operation === 'acceptUserInvite') {
 					try {
-						const token = this.getNodeParameter("token", i) as string;
-						const password = this.getNodeParameter("password", i) as string;
+						const token = this.getNodeParameter('token', i) as string;
+						const password = this.getNodeParameter('password', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `users/invite/accept`;
 
 						let response;
 						body = { token, password };
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5353,24 +4557,18 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "generate2FA") {
+				if (operation === 'generate2FA') {
 					try {
-						const password = this.getNodeParameter("password", i) as string;
+						const password = this.getNodeParameter('password', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `users/me/tfa/generate`;
 
 						let response;
 						body = { password };
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5385,25 +4583,19 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "enable2FA") {
+				if (operation === 'enable2FA') {
 					try {
-						const secret = this.getNodeParameter("secret", i) as string;
-						const otp = this.getNodeParameter("otp", i) as string;
+						const secret = this.getNodeParameter('secret', i) as string;
+						const otp = this.getNodeParameter('otp', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `users/me/tfa/enable`;
 
 						let response;
 						body = { secret, otp };
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5418,24 +4610,18 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "disable2FA") {
+				if (operation === 'disable2FA') {
 					try {
-						const otp = this.getNodeParameter("otp", i) as string;
+						const otp = this.getNodeParameter('otp', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `users/me/tfa/disable`;
 
 						let response;
 						body = { otp };
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
@@ -5451,28 +4637,20 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "utils") {
-				if (operation == "clearCache") {
+			if (resource === 'utils') {
+				if (operation === 'clearCache') {
 					try {
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `utils/cache/clear`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5487,32 +4665,24 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "generateHash") {
+				if (operation === 'generateHash') {
 					try {
-						const String = this.getNodeParameter("string", i) as string;
+						const strString = this.getNodeParameter('string', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `utils/hash/generate`;
 
 						let response;
-						body = { string: String };
+						body = { string: strString };
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						console.log({ response });
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5526,35 +4696,24 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "getRandomString") {
+				if (operation === 'getRandomString') {
 					try {
-						const additionalFields = this.getNodeParameter(
-							"additionalFields",
-							i,
-						) as IDataObject;
-						const length = (additionalFields?.["length"] as number) ?? null;
+						const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
+						const length = (additionalFields?.['length'] as number) ?? null;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `utils/random/string`;
 
 						let response;
 
 						if (length) qs = { length };
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5569,37 +4728,29 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "verfiyHash") {
+				if (operation === 'verfiyHash') {
 					try {
-						const String = this.getNodeParameter("string", i) as string;
-						const hash = this.getNodeParameter("hash", i) as string;
+						const strString = this.getNodeParameter('string', i) as string;
+						const hash = this.getNodeParameter('hash', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `utils/hash/verify`;
 
 						let response;
 						body = {
 							hash,
-							string: String,
+							string: strString,
 						};
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 						console.log(typeof response);
 						console.log(response);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5614,32 +4765,24 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "sortItems") {
+				if (operation === 'sortItems') {
 					try {
-						const item = this.getNodeParameter("item", i) as number;
-						const to = this.getNodeParameter("to", i) as number;
-						const collection = this.getNodeParameter("collection", i) as string;
+						const item = this.getNodeParameter('item', i) as number;
+						const to = this.getNodeParameter('to', i) as number;
+						const collection = this.getNodeParameter('collection', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `utils/sort/${collection}`;
 
 						let response;
 						body = { item, to };
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5654,12 +4797,12 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "importFileData") {
+				if (operation === 'importFileData') {
 					try {
 						const sendBinaryData = true; //this.getNodeParameter( 'sendBinaryData', i ) as boolean;
-						const collection = this.getNodeParameter("collection", i) as string;
+						const collection = this.getNodeParameter('collection', i) as string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `utils/import/${collection}`;
 
 						let response;
@@ -5667,8 +4810,7 @@ export class Directus implements INodeType {
 						if (sendBinaryData) {
 							const item = items[i].binary as IBinaryKeyData;
 							const binaryPropertyName =
-								(this.getNodeParameter("binaryPropertyName", i) as string) ??
-								null;
+								(this.getNodeParameter('binaryPropertyName', i) as string) ?? null;
 							const binaryData = item[binaryPropertyName] as IBinaryData;
 							const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
 								i,
@@ -5695,13 +4837,11 @@ export class Directus implements INodeType {
 							);
 						}
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = JSON.parse(JSON.stringify(response)).data;
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5717,30 +4857,22 @@ export class Directus implements INodeType {
 					}
 				}
 			}
-			if (resource === "webhooks") {
-				if (operation == "get") {
+			if (resource === 'webhooks') {
+				if (operation === 'get') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `webhooks/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5755,29 +4887,28 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "list") {
+				if (operation === 'list') {
 					try {
-						returnAll =
-							(this.getNodeParameter("returnAll", i) as boolean) ?? false;
+						returnAll = (this.getNodeParameter('returnAll', i) as boolean) ?? false;
 
-						const splitIntoItems =
-							(this.getNodeParameter("splitIntoItems", i) as boolean) ?? false;
+						const splitIntoItems = (this.getNodeParameter('splitIntoItems', i) as boolean) ?? false;
 
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 						const additionalFields = !parametersAreJson
-							? (this.getNodeParameter("additionalFields", i) as IDataObject)
+							? (this.getNodeParameter('additionalFields', i) as IDataObject)
 							: {};
-			  if(additionalFields && additionalFields.aggregate){
-				  const aggregation = (additionalFields.aggregate as IDataObject).aggregationFunctions as IDataObject[];
-				  if(aggregation){
-					  aggregation.forEach(a => {
-						  qs[`aggregate[${a.name}]`] = a.value;
-					  });
-				  }
-			  }
+						if (additionalFields && additionalFields.aggregate) {
+							const aggregation = (additionalFields.aggregate as IDataObject)
+								.aggregationFunctions as IDataObject[];
+							if (aggregation) {
+								aggregation.forEach((a) => {
+									qs[`aggregate[${a.name}]`] = a.value;
+								});
+							}
+						}
 
-						requestMethod = "GET";
+						requestMethod = 'GET';
 						endpoint = `webhooks`;
 
 						let response;
@@ -5786,28 +4917,27 @@ export class Directus implements INodeType {
 							qs.limit = -1;
 						} else if (!parametersAreJson) {
 							qs.limit =
-								this.getNodeParameter("limit", i) != undefined
-									? (this.getNodeParameter("limit", i) as number)
+								this.getNodeParameter('limit', i) !== undefined
+									? (this.getNodeParameter('limit', i) as number)
 									: 10;
 						} else {
 							qs.limit = null;
 						}
 
 						if (parametersAreJson) {
-							const queryParametersJson = this.getNodeParameter(
-								"queryParametersJson",
-								i,
-							) as object | string;
-							if (typeof queryParametersJson == "string") {
+							const queryParametersJson = this.getNodeParameter('queryParametersJson', i) as
+								| object
+								| string;
+							if (typeof queryParametersJson === 'string') {
 								qs = JSON.parse(queryParametersJson);
 							} else {
 								qs = JSON.parse(JSON.stringify(queryParametersJson));
 							}
 						} else {
 							for (const key in additionalFields) {
-								if (["deep", "filter"].includes(key)) {
+								if (['deep', 'filter'].includes(key)) {
 									const object = additionalFields[key] as object | string;
-									if (typeof object == "string") {
+									if (typeof object === 'string') {
 										qs[key] = JSON.stringify(JSON.parse(object)) as string;
 									} else {
 										qs[key] = JSON.stringify(object);
@@ -5818,21 +4948,13 @@ export class Directus implements INodeType {
 							}
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
 
-						if (typeof response != "object") {
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5841,36 +4963,34 @@ export class Directus implements INodeType {
 						const exportType = (additionalFields.export as string) ?? null;
 						const binary: IBinaryKeyData = {};
 						if (exportType) {
-							const binaryPropertyName =
-								(additionalFields.binaryPropertyName as string) || "data";
-							let fileName = (additionalFields.fileName as string) || "export";
+							const binaryPropertyName = (additionalFields.binaryPropertyName as string) || 'data';
+							let fileName = (additionalFields.fileName as string) || 'export';
 							let binaryData: Buffer, mimeType, fileExtension;
 
-							if (exportType == "json") {
+							if (exportType === 'json') {
 								binaryData = Buffer.from(JSON.stringify(response));
-								mimeType = "application/json";
-								fileExtension = "json";
+								mimeType = 'application/json';
+								fileExtension = 'json';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "csv") {
+							} else if (exportType === 'csv') {
 								binaryData = Buffer.from(response);
-								mimeType = "text/csv";
-								fileExtension = "csv";
+								mimeType = 'text/csv';
+								fileExtension = 'csv';
 								fileName = `${fileName}.${fileExtension}`;
-							} else if (exportType == "xml") {
+							} else if (exportType === 'xml') {
 								binaryData = Buffer.from(response);
-								mimeType = "application/xml";
-								fileExtension = "xml";
+								mimeType = 'application/xml';
+								fileExtension = 'xml';
 								fileName = `${fileName}.${fileExtension}`;
 							} else {
 								binaryData = Buffer.alloc(0);
-								mimeType = "";
+								mimeType = '';
 							}
-							binary![binaryPropertyName] =
-								await this.helpers.prepareBinaryData(
-									binaryData,
-									fileName,
-									mimeType,
-								);
+							binary![binaryPropertyName] = await this.helpers.prepareBinaryData(
+								binaryData,
+								fileName,
+								mimeType,
+							);
 						}
 						//////////////////////////////////
 						if (splitIntoItems === true && Array.isArray(responseData)) {
@@ -5896,65 +5016,52 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "create") {
+				if (operation === 'create') {
 					try {
 						const parametersAreJson =
-							(this.getNodeParameter("jsonParameters", i) as boolean) ?? false;
+							(this.getNodeParameter('jsonParameters', i) as boolean) ?? false;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `webhooks`;
 
 						let response;
 
 						if (parametersAreJson) {
-							const bodyParametersJson = this.getNodeParameter(
-								"bodyParametersJson",
-								i,
-							) as object | string;
-							if (typeof bodyParametersJson == "string") {
+							const bodyParametersJson = this.getNodeParameter('bodyParametersJson', i) as
+								| object
+								| string;
+							if (typeof bodyParametersJson === 'string') {
 								body = JSON.parse(bodyParametersJson);
 							} else {
 								body = JSON.parse(JSON.stringify(bodyParametersJson));
 							}
 						} else {
-							const name = this.getNodeParameter("name", i) as string;
-							const url = this.getNodeParameter("url", i) as string;
-							const actions = this.getNodeParameter("actions", i) as
-								| object
-								| string;
-							const collections = this.getNodeParameter("collections", i) as
-								| object
-								| string;
+							const name = this.getNodeParameter('name', i) as string;
+							const url = this.getNodeParameter('url', i) as string;
+							const actions = this.getNodeParameter('actions', i) as object | string;
+							const collections = this.getNodeParameter('collections', i) as object | string;
 							console.log({ name, url, actions, collections });
 
-							if (typeof actions == "string") {
-								body["actions"] = JSON.parse(actions);
+							if (typeof actions === 'string') {
+								body['actions'] = JSON.parse(actions);
 							} else {
-								body["actions"] = JSON.parse(JSON.stringify(actions));
+								body['actions'] = JSON.parse(JSON.stringify(actions));
 							}
-							if (typeof collections == "string") {
-								body["collections"] = JSON.parse(collections);
+							if (typeof collections === 'string') {
+								body['collections'] = JSON.parse(collections);
 							} else {
-								body["collections"] = JSON.parse(JSON.stringify(collections));
+								body['collections'] = JSON.parse(JSON.stringify(collections));
 							}
-							body["name"] = name;
-							body["url"] = url;
+							body['name'] = name;
+							body['url'] = url;
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -5969,34 +5076,26 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "createMultiple") {
+				if (operation === 'createMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "POST";
+						requestMethod = 'POST';
 						endpoint = `webhooks`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -6011,35 +5110,27 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "update") {
+				if (operation === 'update') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
-						const data = this.getNodeParameter("data", i) as object | string;
+						const ID = this.getNodeParameter('id', i) as string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `webhooks/${ID}`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -6054,34 +5145,26 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "updateMultiple") {
+				if (operation === 'updateMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "PATCH";
+						requestMethod = 'PATCH';
 						endpoint = `webhooks`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -6096,29 +5179,21 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "delete") {
+				if (operation === 'delete') {
 					try {
-						const ID = this.getNodeParameter("id", i) as string;
+						const ID = this.getNodeParameter('id', i) as string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `webhooks/${ID}`;
 
 						let response;
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
@@ -6133,34 +5208,26 @@ export class Directus implements INodeType {
 						throw error;
 					}
 				}
-				if (operation == "deleteMultiple") {
+				if (operation === 'deleteMultiple') {
 					try {
-						const data = this.getNodeParameter("data", i) as object | string;
+						const data = this.getNodeParameter('data', i) as object | string;
 
-						requestMethod = "DELETE";
+						requestMethod = 'DELETE';
 						endpoint = `webhooks`;
 
 						let response;
-						if (typeof data == "string") {
+						if (typeof data === 'string') {
 							body = JSON.parse(data);
 						} else {
 							body = JSON.parse(JSON.stringify(data));
 						}
 
-						response = await directusApiRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							body,
-							qs,
-						);
-						if (typeof response != "object") {
+						response = await directusApiRequest.call(this, requestMethod, endpoint, body, qs);
+						if (typeof response !== 'object') {
 							responseData = { response };
 						} else {
 							responseData = response.data ?? {};
-							if (
-								["string", "number", "boolean"].includes(typeof responseData)
-							) {
+							if (['string', 'number', 'boolean'].includes(typeof responseData)) {
 								const temp = responseData;
 								responseData = { result: temp };
 							}
