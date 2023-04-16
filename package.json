@@ -1,6 +1,6 @@
 {
-	"name": "n8n-nodes-directus",
-	"version": "1.0.0",
+	"name": "@denklab/n8n-nodes-directus",
+	"version": "1.0.3",
 	"description": "Node to interact with a Directus instance",
 	"keywords": [
 		"n8n-community-node-package"
@@ -13,18 +13,22 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/arladmin/n8n-nodes-directus.git"
+		"url": "https://github.com/denkhaus/n8n-nodes-directus.git"
 	},
 	"main": "index.js",
 	"scripts": {
+		"clean": "rimraf node_modules dist",
 		"build": "tsc && gulp build:icons",
 		"dev": "tsc --watch",
 		"format": "prettier nodes credentials --write",
 		"lint": "eslint nodes credentials package.json",
-		"tslint": "tslint -p tsconfig.json -c tslint.json &&",
 		"lintfix": "eslint nodes credentials package.json --fix",
-		"tslintfix": "tslint --fix -p tsconfig.json -c tslint.json",
-		"prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json"
+		"nibble": "eslint-nibble --ext .ts,.js nodes",
+		"prepublishOnly_rem": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json",
+		"prepublishOnly": "pnpm build"
+	},
+	"publishConfig": {
+		"access": "public"
 	},
 	"files": [
 		"dist"
@@ -32,27 +36,27 @@
 	"n8n": {
 		"n8nNodesApiVersion": 1,
 		"credentials": [
-			"dist/credentials/DirectusApi.credentials"
+			"dist/credentials/DirectusApi.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/Directus/Directus.node.js"
+			"dist/nodes/Directus/v1/DirectusV1.node.js"
 		]
 	},
 	"devDependencies": {
 		"@types/express": "^4.17.6",
-		"@types/form-data": "^2.5.0",
 		"@types/luxon": "^3.3.0",
 		"@types/node": "^18.14.0",
 		"@types/request": "^2.48.8",
 		"@types/request-promise-native": "~1.0.15",
-		"form-data": "^4.0.0",
-		"n8n-core": "*",
-		"n8n-workflow": "*",
-		"tslint": "^6.1.3",
 		"@typescript-eslint/parser": "~5.45",
+		"eslint-nibble": "^8.1.0",
 		"eslint-plugin-n8n-nodes-base": "^1.11.0",
+		"form-data": "^4.0.0",
 		"gulp": "^4.0.2",
+		"n8n-core": "^0.161.0",
+		"n8n-workflow": "^0.143.0",
 		"prettier": "^2.7.1",
+		"rimraf": "^5.0.0",
 		"typescript": "~4.8.4"
 	}
 }

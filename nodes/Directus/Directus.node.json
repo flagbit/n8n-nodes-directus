@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-directus",
+	"node": "@denklab/n8n-nodes-directus",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Data & Storage"],
@@ -11,7 +11,7 @@
 		],
 		"primaryDocumentation": [
 			{
-				"url": "https://github.com/arladmin/n8n-nodes-directus"
+				"url": "https://github.com/denkhaus/n8n-nodes-directus"
 			}
 		]
 	},
