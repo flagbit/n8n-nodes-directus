@@ -9,7 +9,8 @@ type DirectusMap = {
 		| 'get'
 		| 'list'
 		| 'update'
-		| 'updateMultiple';
+		| 'updateMultiple'
+		| 'upsert';
 	activity: 'create' | 'delete' | 'get' | 'list' | 'update';
 	assets: 'get';
 	auth:
