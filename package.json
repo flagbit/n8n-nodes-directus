@@ -1,6 +1,6 @@
 {
 	"name": "@denklab/n8n-nodes-directus",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Node to interact with a Directus instance",
 	"keywords": [
 		"n8n-community-node-package"
@@ -41,6 +41,9 @@
 		"nodes": [
 			"dist/nodes/Directus/v1/DirectusV1.node.js"
 		]
+	},
+	"dependencies": {
+		"json-parse-even-better-errors": "^3.0.0"
 	},
 	"devDependencies": {
 		"@types/express": "^4.17.6",
