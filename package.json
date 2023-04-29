@@ -1,6 +1,6 @@
 {
 	"name": "@denklab/n8n-nodes-directus",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "Node to interact with a Directus instance",
 	"keywords": [
 		"n8n-community-node-package"
