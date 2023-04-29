@@ -7,6 +7,7 @@ export const Export = (): INodeProperties[] => [
 		type: 'options',
 		placeholder: 'Select an option',
 		default: 'csv',
+		// eslint-disable-next-line n8n-nodes-base/node-param-description-miscased-json
 		description: 'Saves the API response to a file. Accepts one of json, csv, xml.',
 		options: [
 			{

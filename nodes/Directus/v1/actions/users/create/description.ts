@@ -117,6 +117,7 @@ for all available languages and translations.`,
 				type: 'options',
 				placeholder: '',
 				default: '',
+				// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-options
 				description: 'Role of the User',
 				typeOptions: {
 					loadOptionsMethod: 'getRoles',

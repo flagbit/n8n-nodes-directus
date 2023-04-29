@@ -2,6 +2,7 @@ import type { RelationsProperties } from '../../interfaces';
 
 export const updateDescription: RelationsProperties = [
 	{
+		// eslint-disable-next-line n8n-nodes-base/node-param-display-name-wrong-for-dynamic-options
 		displayName: 'Field Name',
 		name: 'field',
 		type: 'options',
