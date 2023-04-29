@@ -1,4 +1,4 @@
-import {
+import type {
 	IBinaryKeyData,
 	IDataObject,
 	IExecuteFunctions,
@@ -56,7 +56,7 @@ export function formatResponse(response: any): IDataObject | IDataObject[] {
 }
 
 export function parseData(data: string | IDataObject, fieldName: string): IDataObject {
-	let strData: string = '';
+	let strData = '';
 	try {
 		strData = typeof data === 'string' ? data : JSON.stringify(data);
 		return parseJSON(strData);
@@ -104,8 +104,8 @@ export async function responseToBinary(
 	this: IExecuteFunctions | IExecuteSingleFunctions,
 	response: IDataObject | IDataObject[],
 	exportType: string,
-	fileName: string = 'export',
-	binaryPropertyName: string = 'data',
+	fileName = 'export',
+	binaryPropertyName = 'data',
 ): Promise<IBinaryKeyData> {
 	const binary: IBinaryKeyData = {};
 

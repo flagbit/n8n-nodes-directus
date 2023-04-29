@@ -34,7 +34,7 @@ export const createDescription: ItemsProperties = [
 		placeholder: '{\n	"title": "Hello world!",\n	"body": "This is our first article"\n}',
 		default: null,
 		description:
-			'The partial [item object](https://docs.directus.io/reference/api/items/#the-item-object)',
+			'The partial [item object](https://docs.directus.io/reference/items.html#create-an-item)',
 		required: true,
 		typeOptions: {
 			alwaysOpenEditWindow: true,

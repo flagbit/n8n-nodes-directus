@@ -47,7 +47,7 @@ export const getDescription: AssetsProperties = [
 			},
 		},
 		description:
-			'Name of the binary property which contains the data for the file to be uploaded. For Form-Data Multipart, multiple can be provided in the format: `sendKey1:binaryProperty1,sendKey2:binaryProperty2`',
+			'Name of the binary property which contains the data for the file to be uploaded. For Form-Data Multipart, multiple can be provided in the format: `sendKey1:binaryProperty1,sendKey2:binaryProperty2`.',
 	},
 	{
 		displayName: 'Additional Fields',
