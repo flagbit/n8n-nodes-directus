@@ -14,6 +14,7 @@ export const createMultipleDescription: ItemsProperties = [
 		},
 		placeholder: 'articles',
 		default: '',
+		// eslint-disable-next-line n8n-nodes-base/node-param-description-wrong-for-dynamic-options
 		description: 'Unique name of the parent collection',
 		required: true,
 		typeOptions: {
