@@ -9,6 +9,7 @@ export async function upsert(
 ): Promise<INodeExecutionData[]> {
 	const filters = this.getNodeParameter('filters', index);
 	const skipUpdate = this.getNodeParameter('skipUpdate', index) as boolean;
+	const idFieldname = this.getNodeParameter('idFieldname', index) as string;
 	const returnAll = this.getNodeParameter('returnAll', index);
 	const data = this.getNodeParameter('data', index) as IDataObject | string;
 
@@ -41,11 +42,11 @@ export async function upsert(
 	// or update existing item(s) with provided data
 	let updateResponses: IDataObject[] = [];
 	for (const resp of listResponse) {
-		if (resp.id) {
+		if (resp[idFieldname]) {
 			const updateResponse = (await directusApiRequest.call(
 				this,
 				'PATCH',
-				`${endpoint}/${resp.id}`,
+				`${endpoint}/${resp[idFieldname]}`,
 				body,
 			)) as IDataObject;
 			updateResponses = [...updateResponses, updateResponse];

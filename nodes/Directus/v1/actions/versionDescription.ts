@@ -21,7 +21,7 @@ import * as server from './server';
 import * as utils from './utils';
 
 export const versionDescription: INodeTypeDescription = {
-	displayName: 'Directus (denkhaus)',
+	displayName: 'Directus (flagbit)',
 	name: 'directus',
 	icon: 'file:directus.svg',
 	group: ['transform'],

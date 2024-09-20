@@ -5,7 +5,7 @@ import { DirectusV1 } from './v1/DirectusV1.node';
 export class Directus extends VersionedNodeType {
 	constructor() {
 		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'Directus',
+			displayName: 'Directus (flagbit)',
 			name: 'directus',
 			icon: 'file:directus.svg',
 			group: ['output'],

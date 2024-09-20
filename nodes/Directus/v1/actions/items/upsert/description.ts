@@ -57,7 +57,21 @@ export const upsertDescription: ItemsProperties = [
 			alwaysOpenEditWindow: true,
 		},
 	},
-
+	{
+		displayName: 'ID fieldname',
+		name: 'idFieldname',
+		type: 'string',
+		displayOptions: {
+			show: {
+				operation: ['upsert'],
+				resource: ['items'],
+			},
+		},
+		placeholder: '15',
+		default: '',
+		description: 'Field for the Unique ID of the file object',
+		required: true,
+	},
 	{
 		displayName: 'Select items to create or update',
 		name: 'filters',
