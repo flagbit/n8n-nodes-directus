@@ -32,7 +32,7 @@ export async function directusApiRequest(
 
 	const params = credentials;
 	const url = params.url.replace(/\/$/, '') || null;
-	const accessToken = params.accessToken || null;
+	const accessToken = params.accessToken || params.token || null;
 
 	const options: IHttpRequestOptions = {
 		url: `${url}/${path.replace(/^\//, '')}`,
@@ -70,7 +70,7 @@ export async function directusApiAssetRequest(
 
 	const params = credentials;
 	const url = params.url.replace(/\/$/, '') || null;
-	const accessToken = params.accessToken || null;
+	const accessToken = params.accessToken || params.token || null;
 
 	//console.log({url,path,ID});
 
@@ -153,7 +153,7 @@ export async function directusApiFileRequest(
 
 	const params = credentials;
 	const url = params.url.replace(/\/$/, '') || null;
-	const accessToken = params.accessToken || null;
+	const accessToken = params.accessToken || params.token || null;
 
 	const optionsFormData: IHttpRequestOptions = {
 		headers: {

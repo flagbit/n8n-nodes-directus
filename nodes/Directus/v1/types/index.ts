@@ -2,7 +2,8 @@ import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 
 export type DirectusCredentials = {
 	url: string;
-	accessToken: string;
+	accessToken?: string;
+	token?: string;
 };
 
 export type IAggregationDescription = {

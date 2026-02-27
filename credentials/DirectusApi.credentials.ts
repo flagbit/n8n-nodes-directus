@@ -26,12 +26,20 @@ export class DirectusApi implements ICredentialType {
 			description: 'The Static Token of the user',
 			required: false,
 		},
+		{
+			displayName: 'Access Token (compat)',
+			name: 'token',
+			type: 'hidden',
+			typeOptions: { password: true },
+			default: '',
+			description: 'Fallback field for compatibility with @directus/n8n-nodes-directus credentials',
+		},
 	];
 	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
 			headers: {
-				Authorization: '={{"Bearer "+ $credentials.accessToken}}',
+				Authorization: '={{"Bearer "+ ($credentials.accessToken || $credentials.token || "")}}',
 			},
 		},
 	};
